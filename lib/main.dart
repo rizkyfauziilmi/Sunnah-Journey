@@ -13,8 +13,6 @@ import 'package:flutter/services.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-// TODO: add splash screen
-// TODO: change app icon and name
 // TODO: add loading animation with lottie
 // TODO: remove getx, use goroute instead for routing
 void main() async {
