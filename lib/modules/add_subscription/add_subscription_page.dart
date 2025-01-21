@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_counter/data/models/sunnah.dart';
-import 'package:flutter_counter/data/services/sunnah_service.dart';
 import 'package:flutter_counter/modules/add_subscription/components/card_category.dart';
 
 class AddSubscriptionPage extends StatefulWidget {
@@ -11,8 +10,6 @@ class AddSubscriptionPage extends StatefulWidget {
 }
 
 class _AddSubscriptionPageState extends State<AddSubscriptionPage> {
-  final sunnahService = SunnahService();
-
   @override
   Widget build(BuildContext context) {
     return Padding(

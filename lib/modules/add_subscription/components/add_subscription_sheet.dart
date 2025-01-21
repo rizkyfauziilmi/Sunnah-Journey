@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_counter/data/models/sunnah.dart';
 import 'package:flutter_counter/data/services/sunnah_service.dart';
+import 'package:flutter_counter/modules/add_subscription/components/add_subscription_not_found.dart';
 import 'package:flutter_counter/shared/widgets/loading_animation.dart';
 import 'package:flutter_counter/shared/widgets/toast_container.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -47,7 +48,11 @@ class _AddSubscriptionSheetState extends State<AddSubscriptionSheet> {
                 ),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return LoadingAnimation();
+                return LoadingAnimation(
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.fill,
+                );
               }
 
               if (snapshot.hasError) {
@@ -165,19 +170,7 @@ class _AddSubscriptionSheetState extends State<AddSubscriptionSheet> {
                   },
                 );
               } else {
-                return Center(
-                  child: Column(
-                    children: [
-                      Text('No Sunnahs yet'),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.read<SunnahService>().seed();
-                        },
-                        child: Text('Seed database'),
-                      )
-                    ],
-                  ),
-                );
+                return AddSubscriptionNotFound();
               }
             },
           ),
