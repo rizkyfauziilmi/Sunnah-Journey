@@ -3,11 +3,11 @@ import 'package:flutter_counter/data/services/setting_service.dart';
 import 'package:flutter_counter/data/services/sunnah_service.dart';
 import 'package:flutter_counter/config/router/router.dart';
 import 'package:flutter_counter/config/themes/app_themes.dart';
+import 'package:flutter_counter/shared/widgets/loading_animation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 
-// TODO: add loading animation with lottie
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
     final setting = context.watch<SettingService>().setting;
 
     if (setting == null) {
-      return const Center(child: CircularProgressIndicator());
+      return LoadingAnimation();
     }
 
     return MaterialApp.router(

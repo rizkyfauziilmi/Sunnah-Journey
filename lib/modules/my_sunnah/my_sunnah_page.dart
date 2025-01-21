@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_counter/data/services/sunnah_service.dart';
 import 'package:flutter_counter/modules/my_sunnah/components/sunnah_card.dart';
+import 'package:flutter_counter/shared/widgets/loading_animation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +32,7 @@ class _MySunnahPageState extends State<MySunnahPage> {
             .listenSubscribedSunnahs(screenName: 'MySunnahPage'),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return LoadingAnimation();
           }
 
           if (snapshot.hasError) {
