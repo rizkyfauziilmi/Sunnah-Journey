@@ -19,6 +19,8 @@ class Sunnah {
   late int defaultTarget;
 
   SunnahSubscription? subscription;
+
+  static fromMap(Map<String, Object> sunnahData) {}
 }
 
 @Embedded()

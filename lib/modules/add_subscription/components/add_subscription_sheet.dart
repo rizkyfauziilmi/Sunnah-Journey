@@ -84,18 +84,12 @@ class _AddSubscriptionSheetState extends State<AddSubscriptionSheet> {
                         color: isSubscribed ? theme.colorScheme.primary : null,
                       ),
                       title: Text(sunnah.title),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(sunnah.description),
-                          ExpandableText(
-                            sunnah.reference,
-                            expandText: 'show reference',
-                            collapseText: 'hide reference',
-                            maxLines: 1,
-                            linkColor: theme.colorScheme.primary,
-                          )
-                        ],
+                      subtitle: ExpandableText(
+                        sunnah.reference,
+                        expandText: 'show reference',
+                        collapseText: 'hide reference',
+                        maxLines: 2,
+                        linkColor: theme.colorScheme.primary,
                       ),
                       trailing: IconButton(
                         onPressed: () async {

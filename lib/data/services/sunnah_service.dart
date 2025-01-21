@@ -35,7 +35,7 @@ class SunnahService {
 
     return successResponse(
       'Seeded Successfully',
-      '${sunnahData.length} Sunnahs have been seeded successfully.',
+      '${sunnahList.length} Sunnahs have been seeded successfully.',
     );
   }
 
@@ -107,7 +107,7 @@ class SunnahService {
   }
 
   Future<void> _addOrUpdateSunnahs() async {
-    for (var sunnah in sunnahData) {
+    for (var sunnah in sunnahList) {
       final exists = await _repository.checkIfSunnahExists(sunnah.title);
 
       if (!exists) {
@@ -127,7 +127,7 @@ class SunnahService {
   Future<void> _deleteUnlistedSunnahs(List<Sunnah> existingSunnahs) async {
     for (var existingSunnah in existingSunnahs) {
       final stillExists =
-          sunnahData.any((sunnah) => sunnah.title == existingSunnah.title);
+          sunnahList.any((sunnah) => sunnah.title == existingSunnah.title);
 
       if (!stillExists) {
         await _repository.deleteSunnah(existingSunnah.id);

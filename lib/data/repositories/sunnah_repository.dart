@@ -11,6 +11,10 @@ class SunnahRepository {
   static Future<void> initialize() async {
     final dir = await getApplicationDocumentsDirectory();
     isar = await Isar.open([SunnahSchema], directory: dir.path, name: 'sunnah');
+
+    await isar.writeTxn(() async {
+      await isar.sunnahs.clear();
+    });
   }
 
   /// Retrieves a Sunnah object by its ID.
