@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_counter/shared/services/bottom_navigation_service.dart';
-import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({super.key});
+  const BottomNavigation({
+    super.key,
+    required this.changeTab,
+  });
+
+  final void Function(String route) changeTab;
 
   @override
   State<BottomNavigation> createState() => _BottomNavigationState();
@@ -18,6 +22,14 @@ class _BottomNavigationState extends State<BottomNavigation>
     Icons.notifications_rounded,
     Icons.emoji_events_rounded
   ];
+
+  final routesMap = {
+    '/': Icons.home_rounded,
+    '/my_sunnah': Icons.task_alt_rounded,
+    '/add_subscription': Icons.add_rounded,
+    '/notifications': Icons.notifications_rounded,
+    '/leaderboard': Icons.emoji_events_rounded,
+  };
 
   late final AnimationController _controller;
 
@@ -39,6 +51,7 @@ class _BottomNavigationState extends State<BottomNavigation>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final String currentRoute = GoRouterState.of(context).uri.toString();
 
     return SafeArea(
       child: Container(
@@ -49,8 +62,7 @@ class _BottomNavigationState extends State<BottomNavigation>
           borderRadius: BorderRadius.circular(100),
           boxShadow: [
             BoxShadow(
-              color:
-                  Colors.black.withValues(alpha: 0.1), // Shadow untuk elevasi
+              color: Colors.black.withAlpha(25), // Shadow for elevation
               offset: const Offset(0, 4),
               blurRadius: 10,
             ),
@@ -58,23 +70,15 @@ class _BottomNavigationState extends State<BottomNavigation>
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: icons
-              .asMap()
-              .entries
+          children: routesMap.entries
               .map(
                 (entry) => InkWell(
                   onTap: () {
-                    context
-                        .read<BottomNavigationService>()
-                        .updateIndex(entry.key);
+                    widget.changeTab(entry.key);
                     _controller.forward(from: 0);
                   },
                   child: AnimatedScale(
-                    scale:
-                        context.watch<BottomNavigationService>().currentIndex ==
-                                entry.key
-                            ? 1.2
-                            : 1,
+                    scale: currentRoute == entry.key ? 1.2 : 1,
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeOut,
                     child: Transform.translate(
@@ -85,10 +89,7 @@ class _BottomNavigationState extends State<BottomNavigation>
                         width: entry.value == Icons.add_rounded ? 50 : 40,
                         height: entry.value == Icons.add_rounded ? 50 : 40,
                         decoration: BoxDecoration(
-                          color: context
-                                      .watch<BottomNavigationService>()
-                                      .currentIndex ==
-                                  entry.key
+                          color: currentRoute == entry.key
                               ? theme.colorScheme.inversePrimary
                               : theme.colorScheme.primary,
                           borderRadius: BorderRadius.circular(24),
@@ -101,13 +102,9 @@ class _BottomNavigationState extends State<BottomNavigation>
                         ),
                         child: Icon(
                           entry.value,
-                          color: context
-                                      .watch<BottomNavigationService>()
-                                      .currentIndex ==
-                                  entry.key
+                          color: currentRoute == entry.key
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onPrimary
-                                  .withValues(alpha: 0.8),
+                              : theme.colorScheme.onPrimary.withAlpha(204),
                           size: entry.value == Icons.add_rounded ? 30 : 24,
                         ),
                       ),

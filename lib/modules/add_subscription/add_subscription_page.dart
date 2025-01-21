@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_counter/database/models/sunnah.dart';
-import 'package:flutter_counter/database/services/sunnah_service.dart';
-import 'package:flutter_counter/modules/home/components/card_category.dart';
+import 'package:flutter_counter/data/models/sunnah.dart';
+import 'package:flutter_counter/data/services/sunnah_service.dart';
+import 'package:flutter_counter/modules/add_subscription/components/card_category.dart';
 
-class AddSubscriptionScreen extends StatefulWidget {
-  const AddSubscriptionScreen({super.key});
+class AddSubscriptionPage extends StatefulWidget {
+  const AddSubscriptionPage({super.key});
 
   @override
-  State<AddSubscriptionScreen> createState() => _AddSubscriptionScreenState();
+  State<AddSubscriptionPage> createState() => _AddSubscriptionPageState();
 }
 
-class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
+class _AddSubscriptionPageState extends State<AddSubscriptionPage> {
   final sunnahService = SunnahService();
 
   @override

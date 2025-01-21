@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_counter/database/models/sunnah.dart';
-import 'package:flutter_counter/database/services/sunnah_service.dart';
+import 'package:flutter_counter/data/models/sunnah.dart';
+import 'package:flutter_counter/data/services/sunnah_service.dart';
 import 'package:flutter_counter/shared/widgets/toast_container.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';

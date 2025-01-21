@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_counter/modules/settings/components/appearance_settings.dart';
 import 'package:flutter_counter/modules/settings/components/info_app.dart';
 import 'package:flutter_counter/modules/settings/components/preview_user_profile.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -12,6 +13,14 @@ class SettingsPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Settings'),
+          leading: IconButton(
+            onPressed: () {
+              context.go('/');
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+            ),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

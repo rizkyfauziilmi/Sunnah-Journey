@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_counter/modules/home/components/sunnah_category_chart.dart';
 import 'package:flutter_counter/modules/home/components/sunnah_today_chart.dart';
-import 'package:flutter_counter/shared/services/bottom_navigation_service.dart';
-import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 class SunnahProgress extends StatelessWidget {
   const SunnahProgress({
@@ -31,7 +30,7 @@ class SunnahProgress extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                context.read<BottomNavigationService>().updateIndex(1);
+                context.go('/my_sunnah');
               },
               child: Text(
                 "See all your Sunnah",

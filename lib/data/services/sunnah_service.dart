@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:flutter_counter/database/models/sunnah.dart';
+import 'package:flutter_counter/data/models/sunnah.dart';
 import 'package:flutter_counter/shared/types/response_result.dart';
 import 'package:flutter_counter/shared/constants/sunnah_data.dart';
 import 'package:isar/isar.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_counter/database/services/setting_service.dart';
+import 'package:flutter_counter/data/services/setting_service.dart';
 import 'package:flutter_counter/modules/settings/components/color_schemes_selector.dart';
 import 'package:flutter_counter/modules/settings/components/setting_expansion_tile.dart';
 import 'package:flutter_counter/modules/settings/components/setting_label.dart';

@@ -1,4 +1,4 @@
-import 'package:flutter_counter/database/models/sunnah.dart';
+import 'package:flutter_counter/data/models/sunnah.dart';
 
 // TODO: search valid reference data
 final sunnahData = List<Sunnah>.from([

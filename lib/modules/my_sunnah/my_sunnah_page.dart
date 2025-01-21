@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_counter/database/services/sunnah_service.dart';
-import 'package:flutter_counter/modules/home/components/sunnah_card.dart';
+import 'package:flutter_counter/data/services/sunnah_service.dart';
+import 'package:flutter_counter/modules/my_sunnah/components/sunnah_card.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-class MySunnahScreen extends StatefulWidget {
-  const MySunnahScreen({super.key});
+class MySunnahPage extends StatefulWidget {
+  const MySunnahPage({super.key});
 
   @override
-  State<MySunnahScreen> createState() => _MySunnahScreenState();
+  State<MySunnahPage> createState() => _MySunnahPageState();
 }
 
-class _MySunnahScreenState extends State<MySunnahScreen> {
+class _MySunnahPageState extends State<MySunnahPage> {
   late FToast fToast;
 
   @override

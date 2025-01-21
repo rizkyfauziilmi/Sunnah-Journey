@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_counter/database/models/sunnah.dart';
-import 'package:flutter_counter/modules/home/components/add_subscription_sheet.dart';
+import 'package:flutter_counter/data/models/sunnah.dart';
+import 'package:flutter_counter/modules/add_subscription/components/add_subscription_sheet.dart';
 
 class CardCategory extends StatefulWidget {
   const CardCategory({super.key, required this.category});
