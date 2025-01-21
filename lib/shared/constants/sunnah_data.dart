@@ -8,8 +8,6 @@ final sunnahData = [
     'description': 'Pray 2 rakaat before Fajr',
     'defaultTarget': 1,
     'reference': '''
-وعنها عن النبي صلى الله عليه وسلم قال‏: ‏ ‏ "‏ركعتا الفجر خير من الدنيا وما فيها‏"‏ ‏(‏‏(‏رواه مسلم‏)‏‏)‏‏.‏ وفي رواية لهما لأحب إلي من الدنيا جميعًا‏.‏
-
 'Aishah (May Allah be pleased with her) reported: The Prophet (ﷺ) said, "The two Rak'ah before the dawn (Fajr) prayer are better than this world and all it contains." [Muslim]
 
 Another narration goes: "The two Rak'ah before the dawn (Fajr) prayer are dearer to me than the whole world."
