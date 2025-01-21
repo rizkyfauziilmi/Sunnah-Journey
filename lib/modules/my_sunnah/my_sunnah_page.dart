@@ -19,10 +19,6 @@ class _MySunnahPageState extends State<MySunnahPage> {
     super.initState();
     fToast = FToast();
     fToast.init(context);
-
-    // ! do not remove this
-    // * it prevent outdated resetAt
-    context.read<SunnahService>().resetSubscriptions();
   }
 
   @override
@@ -32,7 +28,7 @@ class _MySunnahPageState extends State<MySunnahPage> {
       child: StreamBuilder(
         stream: context
             .read<SunnahService>()
-            .listenSubscribedSunnahs(screenName: 'MySunnahScreen'),
+            .listenSubscribedSunnahs(screenName: 'MySunnahPage'),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
@@ -44,9 +40,9 @@ class _MySunnahPageState extends State<MySunnahPage> {
 
           final sunnahs = snapshot.data;
           sunnahs!.sort((a, b) => a.subscription!.isCompleted
-              ? -1
+              ? 1
               : b.subscription!.isCompleted
-                  ? 1
+                  ? 2
                   : 0);
 
           if (sunnahs.isNotEmpty) {

@@ -1,6 +1,7 @@
 import 'package:flutter_counter/data/models/sunnah.dart';
 
 // TODO: search valid reference data
+// TODO use json for maintain all data, create sunnahData from that json
 final sunnahData = List<Sunnah>.from([
   // Worship
   Sunnah()

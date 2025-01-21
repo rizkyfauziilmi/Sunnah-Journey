@@ -1,31 +1,22 @@
 import 'dart:developer';
 
 import 'package:flutter_counter/data/models/sunnah.dart';
+import 'package:flutter_counter/data/repositories/sunnah_repository.dart';
 import 'package:flutter_counter/shared/types/response_result.dart';
 import 'package:flutter_counter/shared/constants/sunnah_data.dart';
-import 'package:isar/isar.dart';
-import 'package:jiffy/jiffy.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_counter/shared/utils/conversion.dart';
 
 class SunnahService {
-  static late Isar isar;
+  final SunnahRepository _repository = SunnahRepository();
 
-  /// Initialize Isar and seed database
   static Future<void> initialize() async {
-    final dir = await getApplicationDocumentsDirectory();
-    isar = await Isar.open([SunnahSchema], directory: dir.path, name: 'sunnah');
-    log('Initialized', name: 'SunnahService');
-
+    await SunnahRepository.initialize();
     await SunnahService().seed();
-
-    // TODO: use foreground service instead
-    // TODO: check does the function works properly
-    await SunnahService().resetSubscriptions();
+    log('Initialized', name: 'SunnahService');
   }
 
-  /// Toggle subscription for a specific Sunnah
   Future<ResponseResult> toggleSubscription(int sunnahId) async {
-    final sunnah = await isar.sunnahs.get(sunnahId);
+    final sunnah = await _repository.getSunnah(sunnahId);
 
     if (sunnah == null) {
       return errorResponse('Sunnah not found', 'Try to seed the database.');
@@ -36,9 +27,8 @@ class SunnahService {
         : await _subscribeSunnah(sunnah);
   }
 
-  /// Seed the database with initial Sunnah data
   Future<ResponseResult> seed() async {
-    final existingSunnahs = await isar.sunnahs.where().findAll();
+    final existingSunnahs = await _repository.getAllSunnahs();
 
     await _addOrUpdateSunnahs();
     await _deleteUnlistedSunnahs(existingSunnahs);
@@ -49,43 +39,35 @@ class SunnahService {
     );
   }
 
-  /// Listen to subscribed Sunnahs
-  Stream<List<Sunnah>> listenSubscribedSunnahs({String? screenName}) async* {
+  Stream<List<Sunnah>> listenSubscribedSunnahs({String? screenName}) {
     log(
       'Listening Subscribed Sunnahs ${screenName != null ? 'for $screenName' : ''}',
       name: 'SunnahService',
     );
 
-    yield* isar.sunnahs
-        .where()
-        .filter()
-        .subscriptionIsNotNull()
-        .watch(fireImmediately: true);
+    // * every time listenSubscribedSunnahs is called, recheck if any subscriptions need to be reset
+    resetSubscriptions();
+
+    return _repository.watchSubscribedSunnahs();
   }
 
-  /// Listen to Sunnahs by category
   Stream<List<Sunnah>> listenSunnahsByCategory({
     required SunnahCategory category,
     String? screenName,
-  }) async* {
+  }) {
     log(
       'Listening Sunnahs by Category ${category.name} ${screenName != null ? 'for $screenName' : ''}',
       name: 'SunnahService',
     );
 
-    yield* isar.sunnahs
-        .where()
-        .filter()
-        .categoryEqualTo(category)
-        .watch(fireImmediately: true);
+    return _repository.watchSunnahsByCategory(category);
   }
 
-  /// Update progress for a specific Sunnah
   Future<ResponseResult> updateProgress({
     required int sunnahId,
     required ProgressMethod method,
   }) async {
-    final sunnah = await isar.sunnahs.get(sunnahId);
+    final sunnah = await _repository.getSunnah(sunnahId);
 
     if (sunnah == null) {
       return errorResponse('Sunnah not found', 'Try to seed the database.');
@@ -99,15 +81,12 @@ class SunnahService {
     return await _updateProgress(sunnah, method);
   }
 
-  // Private helper methods
   Future<ResponseResult> _subscribeSunnah(Sunnah sunnah) async {
     final subscription = SunnahSubscription()
       ..targetCompletionCount = sunnah.defaultTarget;
 
-    await isar.writeTxn(() async {
-      sunnah.subscription = subscription;
-      await isar.sunnahs.put(sunnah);
-    });
+    sunnah.subscription = subscription;
+    await _repository.putSunnah(sunnah);
 
     log('Subscribed to Sunnah: ${sunnah.title}', name: 'SunnahService');
     return successResponse(
@@ -117,10 +96,8 @@ class SunnahService {
   }
 
   Future<ResponseResult> _unsubscribeSunnah(Sunnah sunnah) async {
-    await isar.writeTxn(() async {
-      sunnah.subscription = null;
-      await isar.sunnahs.put(sunnah);
-    });
+    sunnah.subscription = null;
+    await _repository.putSunnah(sunnah);
 
     log('Unsubscribed from Sunnah: ${sunnah.title}', name: 'SunnahService');
     return successResponse(
@@ -131,21 +108,17 @@ class SunnahService {
 
   Future<void> _addOrUpdateSunnahs() async {
     for (var sunnah in sunnahData) {
-      final exists =
-          await isar.sunnahs.filter().titleEqualTo(sunnah.title).findFirst() !=
-              null;
+      final exists = await _repository.checkIfSunnahExists(sunnah.title);
 
       if (!exists) {
-        await isar.writeTxn(() async {
-          await isar.sunnahs.put(
-            Sunnah()
-              ..title = sunnah.title
-              ..description = sunnah.description
-              ..category = sunnah.category
-              ..defaultTarget = sunnah.defaultTarget
-              ..reference = sunnah.reference,
-          );
-        });
+        await _repository.putSunnah(
+          Sunnah()
+            ..title = sunnah.title
+            ..description = sunnah.description
+            ..category = sunnah.category
+            ..defaultTarget = sunnah.defaultTarget
+            ..reference = sunnah.reference,
+        );
         log('Seeded Sunnah: ${sunnah.title}', name: 'SunnahService');
       }
     }
@@ -157,9 +130,7 @@ class SunnahService {
           sunnahData.any((sunnah) => sunnah.title == existingSunnah.title);
 
       if (!stillExists) {
-        await isar.writeTxn(() async {
-          await isar.sunnahs.delete(existingSunnah.id);
-        });
+        await _repository.deleteSunnah(existingSunnah.id);
         log('Deleted Sunnah from seed: ${existingSunnah.title}',
             name: 'SunnahService');
       }
@@ -194,9 +165,7 @@ class SunnahService {
       subscription.completionCount++;
     }
 
-    await isar.writeTxn(() async {
-      await isar.sunnahs.put(sunnah);
-    });
+    await _repository.putSunnah(sunnah);
 
     return successResponse(
       subscription.isCompleted ? 'Sunnah Completed' : 'Progress Incremented',
@@ -213,9 +182,7 @@ class SunnahService {
     subscription.currentCompletionCount--;
     subscription.isCompleted = false;
 
-    await isar.writeTxn(() async {
-      await isar.sunnahs.put(sunnah);
-    });
+    await _repository.putSunnah(sunnah);
 
     return successResponse(
       'Progress Decremented',
@@ -228,9 +195,7 @@ class SunnahService {
     subscription.currentCompletionCount = 0;
     subscription.isCompleted = false;
 
-    await isar.writeTxn(() async {
-      await isar.sunnahs.put(sunnah);
-    });
+    await _repository.putSunnah(sunnah);
 
     return successResponse(
       'Progress Reset',
@@ -238,20 +203,10 @@ class SunnahService {
     );
   }
 
-  /// Check every subscription and reset it if resetAt already passed
   Future<void> resetSubscriptions() async {
     final now = DateTime.now();
 
-    final subscriptionsToReset = await isar.sunnahs
-        .where()
-        .filter()
-        .subscriptionIsNotNull()
-        .and()
-        .subscription(
-      (q) {
-        return q.resetAtLessThan(now);
-      },
-    ).findAll();
+    final subscriptionsToReset = await _repository.getSubscriptionsToReset(now);
 
     for (var sunnah in subscriptionsToReset) {
       _resetProgress(sunnah, sunnah.subscription!);
@@ -267,27 +222,8 @@ class SunnahService {
     final subscription = sunnah.subscription!;
     final resetTime = generateResetTime(subscription.resetSchedule);
 
-    await isar.writeTxn(() async {
-      sunnah.subscription!.resetAt = resetTime;
-      await isar.sunnahs.put(sunnah);
-    });
-  }
-
-  DateTime generateResetTime(ResetSchedule resetSchedule) {
-    switch (resetSchedule) {
-      case ResetSchedule.daily:
-        // Start of the next day at 00:00
-        return Jiffy.now().add(days: 1).startOf(Unit.day).dateTime;
-      case ResetSchedule.weekly:
-        // Start of the next week at 00:00
-        return Jiffy.now().add(weeks: 1).startOf(Unit.week).dateTime;
-      case ResetSchedule.monthly:
-        // Start of the next month at 00:00
-        return Jiffy.now().add(months: 1).startOf(Unit.month).dateTime;
-      case ResetSchedule.yearly:
-        // Start of the next year at 00:00
-        return Jiffy.now().add(years: 1).startOf(Unit.year).dateTime;
-    }
+    sunnah.subscription!.resetAt = resetTime;
+    await _repository.putSunnah(sunnah);
   }
 }
 
